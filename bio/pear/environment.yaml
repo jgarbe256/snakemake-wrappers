@@ -4,3 +4,4 @@ channels:
   - nodefaults
 dependencies:
   - pear =0.9.6
+  - pigz =2.6

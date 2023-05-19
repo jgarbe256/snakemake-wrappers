@@ -42,21 +42,21 @@ def move_files(in_list, out_list, gzip):
     for f, o in zip(in_list, out_list):
         if f != o:
             if gzip:
-                shell("gzip -9 -c {f} > {o}")
+                shell("pigz -p {snakemake.threads} -c {f} > {o}")
                 shell("rm -f {f}")
             else:
                 shell("cp {f} {o}")
                 shell("rm -f {f}")
         elif gzip:
-            shell("gzip -9 {f}")
+            shell("pigz -p {snakemake.threads} {f}")
 
 
 pval = float(snakemake.params.get("pval", ".01"))
-max_mem = snakemake.resources.get("mem_mb", "4000")
+max_mem = snakemake.resources.get("mem_mb", "200")
 extra = snakemake.params.get("extra", "")
 
 shell(
-    "pear -f {r1} -r {r2} -p {pval} -j {snakemake.threads} -y {max_mem} {extra} -o {out_base} {log}"
+    "pear -f {r1} -r {r2} -p {pval} -j {snakemake.threads} -y {max_mem}M {extra} -o {out_base} {log}"
 )
 
 move_files(df_outputs, final_outputs, gzip)
